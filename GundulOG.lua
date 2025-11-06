@@ -108,6 +108,7 @@ local function refreshEventDropdown()
     for eventName,_ in pairs(eventList) do table.insert(options,eventName) end
     if EventListUI.Dropdown then EventListUI.Dropdown:Refresh(options)
     else EventListUI.Dropdown=EventTab:CreateDropdown({Name="Select Event", Options=options, MultiSelect=false, Callback=function(Value) Flags.SelectedEvent=Value end}) end
+
 end
 refreshEventDropdown()
 EventTab:CreateButton({Name="Refresh Event List", Callback=refreshEventDropdown})
@@ -159,3 +160,30 @@ end)
 
 -- Infinity Jump
 UIS.InputBegan:Connect(function(input) if Flags.InfinityJump and input.KeyCode==Enum.KeyCode.Space and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then LocalPlayer.Character.Humanoid:ChangeState(Enum.HumanoidStateType.Jumping) end end)
+
+-- ====================================================================
+--                     TELEPORT SYSTEM (from dev1.lua)
+-- ====================================================================
+local Teleport = {}
+
+function Teleport.to(locationName)
+    local cframe = LOCATIONS[locationName]
+    if not cframe then
+        warn("❌ [Teleport] Location not found: " .. tostring(locationName))
+        return false
+    end
+    
+    local success = pcall(function()
+        local character = LocalPlayer.Character
+        if not character then return end
+        
+        local rootPart = character:FindFirstChild("HumanoidRootPart")
+        if not rootPart then return end
+        
+        rootPart.CFrame = cframe
+        print("✅ [Teleport] Moved to " .. locationName)
+    end)
+    
+    return success
+end
+})
